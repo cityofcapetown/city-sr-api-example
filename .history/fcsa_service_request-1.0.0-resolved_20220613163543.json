@@ -10,11 +10,15 @@
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "2.1"
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "https://qaeservices1.capetown.gov.za/coct/api/zcur-guest/login",
+      "url": "https://virtserver.swaggerhub.com/c2466/fcsa_service_request/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    },
+    {
+      "url": "http://localhost:8080/",
       "description": "FCSA Service Request API"
     }
   ],
@@ -25,10 +29,6 @@
     },
     {
       "name": "status",
-      "description": "Get status of stored reference numbers"
-    },
-    {
-      "name": "upload_with_image",
       "description": "Get status of stored reference numbers"
     }
   ],
@@ -408,139 +408,6 @@
           }
         }
       }
-    },
-    "/get_sap_cookie_image_upload": {
-      "get": {
-        "tags": [
-          "upload_with_image"
-        ],
-        "description": "Get reference numbers and original headers to be used to check status of uploaded data.\n",
-        "parameters": [
-          {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie, for uploading with image",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful response"
-          },
-          "404": {
-            "description": "Not found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "internal server error"
-          }
-        }
-      }
-    },
-    "/get_session_id_image_upload": {
-      "get": {
-        "tags": [
-          "upload_with_image"
-        ],
-        "summary": "Get session ID.",
-        "description": "Get session ID.\n",
-        "parameters": [
-          {
-            "name": "X-Signature",
-            "in": "query",
-            "description": "Get the private key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "query",
-            "description": "Get the public key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Session",
-            "in": "query",
-            "description": "",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/get_config_types_image_upload": {
-      "get": {
-        "tags": [
-          "upload_with_image"
-        ],
-        "summary": "Get types information",
-        "parameters": [
-          {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "headers",
-            "in": "query",
-            "description": "header infomation containing the private and public key",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -645,21 +512,6 @@
           "street_number": {
             "type": "integer",
             "example": 76
-          }
-        }
-      },
-      "SapCookieImageUpload": {
-        "required": [
-          "address",
-          "email",
-          "message",
-          "sapCookieImageUploadID"
-        ],
-        "type": "object",
-        "properties": {
-          "sapCookieImageUploadID": {
-            "type": "integer",
-            "example": 1
           }
         }
       }
