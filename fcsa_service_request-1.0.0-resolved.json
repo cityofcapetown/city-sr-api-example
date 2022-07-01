@@ -1,10 +1,10 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "FCSA Service Request",
-    "description": "FCSA Service Request",
+    "title": "CCT Customer Service Requests",
+    "description": "This section provides an overview of all aspects of the application programmers’ interface, including registration to use the interface, the various resources that constitute the interface and how these should be orchestrated into an application that will deliver consistent and reliable results.",
     "contact": {
-      "email": "dee@opencitieslab.org"
+      "email": "cct@cct.co.za"
     },
     "license": {
       "name": "Apache 2.0",
@@ -18,90 +18,85 @@
       "description": "FCSA Service Request API"
     }
   ],
+  "security": [
+    {},
+    {
+      "cookieAuth": []
+    }
+  ],
   "tags": [
     {
-      "name": "sap",
-      "description": "Read in data to be uploaded and prepare for post operation"
-    },
-    {
-      "name": "status",
-      "description": "Get status of stored reference numbers"
-    },
-    {
-      "name": "upload_with_image",
-      "description": "Get status of stored reference numbers"
+      "name": "service_request_group",
+      "description": "This process shows the flow of actions in which the application takes for the creation of a service request. \n"
     }
   ],
   "paths": {
-    "/get_sap_cookie": {
+    "/coct/api/zcur-guest/login": {
       "get": {
         "tags": [
-          "sap"
+          "service_request_group"
         ],
-        "summary": "Get MYSAPSSO2 cookie.",
-        "description": "Pass in the header infomation containing the X-Service public key\n",
+        "description": "Ths services is used to authenticate and retrieve the MYSAPSSO2 cookie or authentication token. \n",
         "parameters": [
           {
-            "name": "X-Signature",
+            "name": "cookie",
             "in": "query",
-            "description": "Get the private key.",
             "required": true,
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "query",
-            "description": "Get the public key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "login successful"
-          },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
+            "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Pass this cookie back in subsequent requests.\n",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "$ref": "#/components/schemas/Login_Schema"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
       }
     },
-    "/get_session_id": {
+    "/coct/api/zsreq/session": {
       "get": {
         "tags": [
-          "sap"
+          "service_request_group"
         ],
-        "summary": "Get session ID.",
-        "description": "Pass in the header infomation containing the X-Service public key\n",
+        "summary": "This operation retrieves a new session identifier for the X-Session header parameter.\n",
         "parameters": [
           {
-            "name": "X-Signature",
+            "name": "cookie",
             "in": "query",
-            "description": "Get the private key.",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
             "required": true,
             "style": "form",
             "explode": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           },
           {
             "name": "X-Service",
-            "in": "query",
-            "description": "Get the public key.",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers. This is a mandatory header parameters.\n",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "explode": true,
             "schema": {
               "type": "string"
@@ -109,10 +104,10 @@
           },
           {
             "name": "X-Session",
-            "in": "query",
-            "description": "",
+            "in": "header",
+            "description": "This is the session key obtained periodically from the City representing the log file entry of a user’s activities. This is a mandatory header parameters.\n",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "explode": true,
             "schema": {
               "type": "string"
@@ -121,41 +116,52 @@
         ],
         "responses": {
           "200": {
-            "description": "ok"
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session_Schema"
+                }
+              }
+            }
           },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
+          "500": {
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/get_config_types": {
+    "/coct/api/zsreq/config/subtypes": {
       "get": {
         "tags": [
-          "sap"
+          "service_request_group"
         ],
-        "summary": "Get types information",
+        "summary": "This service gets the full range of subtype codes and descriptions for all service groups.\n",
         "parameters": [
           {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie.",
+            "name": "X-Session",
+            "in": "header",
+            "description": "This is the session key obtained periodically from the City representing the log file entry of a user’s activities.\n",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "explode": true,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "headers",
-            "in": "query",
-            "description": "header infomation containing the private and public key",
+            "name": "X-Service",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "explode": true,
             "schema": {
               "type": "string"
@@ -164,380 +170,167 @@
         ],
         "responses": {
           "200": {
-            "description": "ok"
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Config_Type_Schema"
+                }
+              }
+            }
           },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
+          "500": {
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/main": {
+    "/coct/api/zsreq/sr/{reference_no}": {
+      "get": {
+        "tags": [
+          "service_request_group"
+        ],
+        "summary": "This operation is used to retrieve the current state of a service request given the service request number.\n",
+        "parameters": [
+          {
+            "name": "reference_no",
+            "in": "path",
+            "description": "The reference number of the service request.\n",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Signature",
+            "in": "header",
+            "description": "The X-Signature is mandatory for all POST operations. We create the signature by using HMAC (keyed-hash message authentication code).\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Session",
+            "in": "header",
+            "description": "This is the session key obtained periodically from the City representing the log file entry of a user’s activities.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Service",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request_Attributes_Detail_Schema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coct/api/zsreq/sr": {
       "post": {
         "tags": [
-          "sap"
+          "service_request_group"
         ],
-        "summary": "Post data",
+        "summary": "This operation is used to create a service request in the City’s system.\n",
+        "parameters": [
+          {
+            "name": "X-Signature",
+            "in": "header",
+            "description": "The X-Signature is mandatory for all POST operations.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Session",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Service",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
-          "description": "Read in data to be uploaded and prepare for post operation",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SapCookie"
+                "$ref": "#/components/schemas/Request_Attributes_Schema"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "successful response"
-          },
-          "404": {
-            "description": "Not found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
+            "description": "OK"
           },
           "500": {
-            "description": "internal server error"
-          }
-        }
-      }
-    },
-    "/get_sap_cookie_status": {
-      "get": {
-        "tags": [
-          "status"
-        ],
-        "summary": "Get MYSAPSSO2 cookie.",
-        "description": "Pass in the header infomation containing the X-Service public key\n",
-        "parameters": [
-          {
-            "name": "X-Signature",
-            "in": "query",
-            "description": "Get the private key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
+                }
+              }
             }
-          },
-          {
-            "name": "X-Service",
-            "in": "query",
-            "description": "Get the public key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "login successful"
-          },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/get_session_id_status": {
-      "get": {
-        "tags": [
-          "status"
-        ],
-        "summary": "Get session ID.",
-        "description": "Get session ID.\n",
-        "parameters": [
-          {
-            "name": "X-Signature",
-            "in": "query",
-            "description": "Get the private key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "query",
-            "description": "Get the public key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Session",
-            "in": "query",
-            "description": "",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/check_status_later": {
-      "get": {
-        "tags": [
-          "status"
-        ],
-        "description": "Check status of uploaded data using reference number and original header info from check_status_stored.\n",
-        "parameters": [
-          {
-            "name": "ref_no",
-            "in": "query",
-            "description": "Get reference number.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "headers",
-            "in": "query",
-            "description": "Get original header info from check_status_stored.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful response"
-          },
-          "404": {
-            "description": "Not found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "internal server error"
-          }
-        }
-      }
-    },
-    "/check_status_stored": {
-      "get": {
-        "tags": [
-          "status"
-        ],
-        "description": "Get reference numbers and original headers to be used to check status of uploaded data.\n",
-        "parameters": [
-          {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful response"
-          },
-          "404": {
-            "description": "Not found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "internal server error"
-          }
-        }
-      }
-    },
-    "/get_sap_cookie_image_upload": {
-      "get": {
-        "tags": [
-          "upload_with_image"
-        ],
-        "description": "Get reference numbers and original headers to be used to check status of uploaded data.\n",
-        "parameters": [
-          {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie, for uploading with image",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful response"
-          },
-          "404": {
-            "description": "Not found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "internal server error"
-          }
-        }
-      }
-    },
-    "/get_session_id_image_upload": {
-      "get": {
-        "tags": [
-          "upload_with_image"
-        ],
-        "summary": "Get session ID.",
-        "description": "Get session ID.\n",
-        "parameters": [
-          {
-            "name": "X-Signature",
-            "in": "query",
-            "description": "Get the private key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "query",
-            "description": "Get the public key.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Session",
-            "in": "query",
-            "description": "",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
-          }
-        }
-      }
-    },
-    "/get_config_types_image_upload": {
-      "get": {
-        "tags": [
-          "upload_with_image"
-        ],
-        "summary": "Get types information",
-        "parameters": [
-          {
-            "name": "cookies",
-            "in": "query",
-            "description": "Get MYSAPSSO2 cookie.",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "headers",
-            "in": "query",
-            "description": "header infomation containing the private and public key",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          },
-          "400": {
-            "description": "bad input parameter"
-          },
-          "404": {
-            "description": "Not found"
           }
         }
       }
@@ -545,7 +338,66 @@
   },
   "components": {
     "schemas": {
-      "SapCookie": {
+      "Error_Schema": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Config_Type_Schema": {
+        "required": [
+          "name",
+          "subtype",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Cat"
+          },
+          "type": {
+            "type": "string",
+            "example": "1001"
+          },
+          "subtype": {
+            "type": "string",
+            "example": "1001"
+          }
+        }
+      },
+      "Login_Schema": {
+        "required": [
+          "cookie"
+        ],
+        "properties": {
+          "cookie": {
+            "type": "string",
+            "example": "k;X/`[AP\\K9Bc<H^vgCv_F.J8w9/%~+V"
+          }
+        }
+      },
+      "Session_Schema": {
+        "required": [
+          "session_id"
+        ],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "example": "k;X/`[AP\\K9Bc<H^vgCv_F.J8w9/%~+V"
+          }
+        }
+      },
+      "Request_Attributes_Schema": {
         "required": [
           "account_number",
           "address",
@@ -554,11 +406,11 @@
           "comm",
           "email",
           "firstName",
+          "id",
           "lastName",
           "latitude",
           "longitude",
           "message",
-          "sapCookieID",
           "street",
           "street_number",
           "subtype",
@@ -569,14 +421,14 @@
         ],
         "type": "object",
         "properties": {
-          "sapCookieID": {
+          "id": {
             "type": "integer",
             "format": "int64",
             "example": 1
           },
           "category_1": {
             "type": "string",
-            "example": "ELECTRICITY TECHNICAL COMPLAINTS"
+            "example": "Support COMPLAINTS"
           },
           "category_2": {
             "type": "string",
@@ -588,7 +440,7 @@
           },
           "email": {
             "type": "string",
-            "example": "Clinton.Drury@vpuu.org.za"
+            "example": "cdorsett3@loc.gov"
           },
           "message": {
             "type": "string",
@@ -596,7 +448,7 @@
           },
           "address": {
             "type": "string",
-            "example": "76 MELTON, ADRIAANSE"
+            "example": "08 Maple Wood Hill"
           },
           "username": {
             "type": "string",
@@ -608,7 +460,7 @@
           },
           "comm": {
             "type": "string",
-            "example": "ADRIAANSE"
+            "example": "Maple"
           },
           "latitude": {
             "type": "string",
@@ -632,15 +484,15 @@
           },
           "firstName": {
             "type": "string",
-            "example": "Clinton"
+            "example": "Gwenora"
           },
           "lastName": {
             "type": "string",
-            "example": "Drury"
+            "example": "Mellor"
           },
           "street": {
             "type": "string",
-            "example": "MELTON"
+            "example": "Utah"
           },
           "street_number": {
             "type": "integer",
@@ -648,20 +500,67 @@
           }
         }
       },
-      "SapCookieImageUpload": {
+      "Request_Attributes_Detail_Schema": {
         "required": [
-          "address",
-          "email",
+          "description",
           "message",
-          "sapCookieImageUploadID"
+          "reference_number",
+          "status",
+          "subtype",
+          "time_created",
+          "type"
         ],
         "type": "object",
         "properties": {
-          "sapCookieImageUploadID": {
-            "type": "integer",
-            "example": 1
+          "reference_number": {
+            "type": "string",
+            "example": "2101825"
+          },
+          "type": {
+            "type": "string",
+            "example": "1001"
+          },
+          "subtype": {
+            "type": "string",
+            "example": "1002"
+          },
+          "description": {
+            "type": "string",
+            "example": "Animal carcass removal - Whale"
+          },
+          "status": {
+            "type": "string",
+            "example": "Tasks Completed"
+          },
+          "message": {
+            "type": "string",
+            "example": "Please collect the whale carcass from Muizenberg beach"
+          },
+          "time_created": {
+            "type": "string",
+            "example": "36539"
           }
         }
+      }
+    },
+    "responses": {
+      "Internal": {
+        "description": "Error in retrieving all type codes and descriptions. (Internal)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error_Schema"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "description": "X-Service public key",
+        "name": "X-Service",
+        "in": "header"
       }
     }
   }
