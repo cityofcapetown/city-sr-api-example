@@ -64,20 +64,8 @@
                 }
               }
             }
-          },
-          "400":{
-            "description": "Bad Request",
-            "headers": {
-              "Set-Cookie": {
-                "description": "Pass this cookie back in subsequent requests.\n",
-                "style": "simple",
-                "explode": false,
-                "schema": {
-                  "$ref": "#/components/schemas/Error_Schema"
-                }
-              }
-            }
           }
+          
         },
         "security": [
           {
@@ -138,16 +126,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error in retrieving all type codes and descriptions. (Internal)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error_Schema"
-                }
-              }
-            }
           }
         }
       }
@@ -157,7 +135,7 @@
         "tags": [
           "service_request_group"
         ],
-        "summary": "This service gets the full range of subtype codes and descriptions for all service groups.\n",
+        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.\n",
         "parameters": [
           {
             "name": "X-Session",
@@ -264,7 +242,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Request_Attributes_Detail_Schema"
+                  "$ref": "#/components/schemas/Request_Attributes_Lookup_Schema"
                 }
               }
             }
@@ -504,7 +482,7 @@
           }
         }
       },
-      "Request_Attributes_Detail_Schema": {
+      "Request_Attributes_Lookup_Schema": {
         "required": [
           "description",
           "message",
