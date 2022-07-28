@@ -10,7 +10,7 @@ The header parameters used in this API are defined in:
 | X-Session    | This is the session key obtained periodically from the City representing the log file entry of a user’s activities. The session identifier must be provided in all calls other than the service that returns the session identifier. |  GUID of 32 characters with no punctuation.  |    
 | X-Signature  | This is a hexadecimal string containing a key-hashed message authentication code (HMAC) calculated from the message string using the SHA256 hash algorithm and encoded using base 64.   | Base 64 encoded string containing an HMAC SHA256 authentication code.  |  
 
-## OpenAPI 3.0 Guide
+## [The Official OpenAPI Spec](https://swagger.io/specification/)
 The OpenAPI public link can be view here: [API](https://app.swaggerhub.com/apis/OpenCitiesLab/cct-customer_service_requests/2.1)
 
 | Property Name | Description                                                                                                                                                                                                                                 | Example                                            | 

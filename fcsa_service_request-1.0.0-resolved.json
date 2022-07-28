@@ -35,7 +35,7 @@
     "/zcur-guest/login": {
       "get": {
         "tags": [
-          "service_request_group"
+          "auth_group"
         ],
         "description": "Returns the MYSAPSSO2 authentication cookie to be used in subsequent requests. \n",
         "parameters": [
