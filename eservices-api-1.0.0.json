@@ -453,11 +453,11 @@
             "example": "18.47152590751648"
           },
           "type": {
-            "type": "integer",
+            "type": "string",
             "example": 1005
           },
           "subtype": {
-            "type": "integer",
+            "type": "sttring",
             "example": 1001
           },
           "telephone": {
