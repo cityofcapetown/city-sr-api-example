@@ -1,0 +1,549 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CCT Customer Service Requests",
+    "description": "This section provides an overview of all aspects of the application programmers’ interface, including registration to use the interface, the various resources that constitute the interface and how these should be orchestrated into an application that will deliver consistent and reliable results.",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "2.1"
+  },
+  "servers": [
+    {
+      "url": "https://qaeservices1.capetown.gov.za/coct/api",
+      "description": "Quality Assurance Server"
+    }
+  ],
+  "security": [
+    {},
+    {
+      "cookieAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "service_request_group",
+      "description": "This process shows the flow of actions in which the application takes for the creation of a service request. \n"
+    },
+    {
+      "name": "auth_group",
+      "description": "This process shows the flow of actions in which the application's authorization process is conducted, that identifies authenticated, non-authenticated user and defines security groups.\n"
+    }
+  ],
+  "paths": {
+    "/zcur-guest/login": {
+      "get": {
+        "tags": [
+          "auth_group"
+        ],
+        "description": "Returns the MYSAPSSO2 authentication cookie to be used in subsequent requests. \n",
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "description": "Pass this cookie back in subsequent requests.\n",
+                "style": "simple",
+                "explode": false,
+                "schema": {
+                  "$ref": "#/components/schemas/Login_Schema"
+                }
+              }
+            }
+          }
+          
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    },
+    "/zsreq/session": {
+      "get": {
+        "tags": [
+          "auth_group"
+        ],
+        "summary": "Returns a new session identifier, to be used in subsequent requests as the value for the X-Session header.\n",
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "query",
+            "description": "The MYSAPSSO2 authentication cookie. See /coct/api/zcur-guest/login path for details on how to retrieve it.\n",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Service",
+            "in": "header",
+            "description": "This service retrieves a session identifier, in the form of a 32-character Globally Unique Identifier (GUID), to be used for the X-Service parameter.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Session",
+            "in": "header",
+            "description": "Retrieves a new session identifier for the X-Session header parameter.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session_Schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zsreq/config/subtypes": {
+      "get": {
+        "tags": [
+          "service_request_group"
+        ],
+        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.\n",
+        "parameters": [
+          {
+            "name": "X-Session",
+            "in": "header",
+            "description": "This is the session key obtained periodically from the City representing the log file entry of a user’s activities.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Service",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Config_Type_Schema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zsreq/sr/{reference_no}": {
+      "get": {
+        "tags": [
+          "service_request_group"
+        ],
+        "summary": "This operation is used to retrieve the current state of a service request given the service request number.\n",
+        "parameters": [
+          {
+            "name": "reference_no",
+            "in": "path",
+            "description": "The reference number of the service request.\n",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Signature",
+            "in": "header",
+            "description": "The X-Signature is mandatory for all POST operations. We create the signature by using HMAC (keyed-hash message authentication code).\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Session",
+            "in": "header",
+            "description": "This is the session key obtained periodically from the City representing the log file entry of a user’s activities.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Service",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request_Attributes_Lookup_Schema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zsreq/sr": {
+      "post": {
+        "tags": [
+          "service_request_group"
+        ],
+        "summary": "This operation is used to create a service request in the City’s system.\n",
+        "parameters": [
+
+          {
+            "name": "X-Session",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Service",
+            "in": "header",
+            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
+            "required": true,
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request_Attributes_Schema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error_Schema": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Config_Type_Schema": {
+        "required": [
+          "name",
+          "subtype",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Cat"
+          },
+          "type": {
+            "type": "string",
+            "example": "1001"
+          },
+          "subtype": {
+            "type": "string",
+            "example": "1001"
+          }
+        }
+      },
+      "Login_Schema": {
+        "required": [
+          "cookie"
+        ],
+        "properties": {
+          "cookie": {
+            "type": "string",
+            "example": "k;X/`[AP\\K9Bc<H^vgCv_F.J8w9/%~+V"
+          }
+        }
+      },
+      "Session_Schema": {
+        "required": [
+          "session_id"
+        ],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "example": "k;X/`[AP\\K9Bc<H^vgCv_F.J8w9/%~+V"
+          }
+        }
+      },
+      "Request_Attributes_Schema": {
+        "required": [
+          "account_number",
+          "address",
+          "category_1",
+          "category_2",
+          "comm",
+          "email",
+          "firstName",
+          "id",
+          "lastName",
+          "latitude",
+          "longitude",
+          "message",
+          "street",
+          "street_number",
+          "subtype",
+          "suburb",
+          "telephone",
+          "type",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "category_1": {
+            "type": "string",
+            "example": "Support COMPLAINTS"
+          },
+          "category_2": {
+            "type": "string",
+            "example": "Street Lights - Single Light Out"
+          },
+          "suburb": {
+            "type": "string",
+            "example": "ADRIAANSE"
+          },
+          "email": {
+            "type": "string",
+            "example": "cdorsett3@loc.gov"
+          },
+          "message": {
+            "type": "string",
+            "example": "This requests was captured by the Walking the Streets program."
+          },
+          "address": {
+            "type": "string",
+            "example": "08 Maple Wood Hill"
+          },
+          "username": {
+            "type": "string",
+            "example": ""
+          },
+          "account_number": {
+            "type": "string",
+            "example": ""
+          },
+          "comm": {
+            "type": "string",
+            "example": "Maple"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "-34.1080381288507"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "18.47152590751648"
+          },
+          "type": {
+            "type": "integer",
+            "example": 1005
+          },
+          "subtype": {
+            "type": "integer",
+            "example": 1001
+          },
+          "telephone": {
+            "type": "string",
+            "example": ""
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Gwenora"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Mellor"
+          },
+          "street": {
+            "type": "string",
+            "example": "Utah"
+          },
+          "street_number": {
+            "type": "integer",
+            "example": 76
+          }
+        }
+      },
+      "Request_Attributes_Lookup_Schema": {
+        "required": [
+          "description",
+          "message",
+          "reference_number",
+          "status",
+          "subtype",
+          "time_created",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "reference_number": {
+            "type": "string",
+            "example": "2101825"
+          },
+          "type": {
+            "type": "string",
+            "example": "1001"
+          },
+          "subtype": {
+            "type": "string",
+            "example": "1002"
+          },
+          "description": {
+            "type": "string",
+            "example": "Animal carcass removal - Whale"
+          },
+          "status": {
+            "type": "string",
+            "example": "Tasks Completed"
+          },
+          "message": {
+            "type": "string",
+            "example": "Please collect the whale carcass from Muizenberg beach"
+          },
+          "time_created": {
+            "type": "string",
+            "example": "36539"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Internal": {
+        "description": "Error in retrieving all type codes and descriptions. (Internal)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error_Schema"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "description": "X-Service public key",
+        "name": "X-Service",
+        "in": "header"
+      }
+    }
+  }
+}
