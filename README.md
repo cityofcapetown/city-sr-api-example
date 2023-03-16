@@ -1,25 +1,58 @@
 # CCT CUSTOMER SERVICE REQUESTS
-This section provides a descriptive overview of the concepts and their implementation and of the resources and their use.
-## API Description
-## HTTP Header Parameters
-The header parameters used in this API are defined in:
+This repo documents the City of Cape Town's eService API, with a particular focus on the Service Request functionality.
 
-| Header Name |Description   | Value characteristics  | 
-|---|---|---|
-| X-Service  | This is the value of the public key issued to the registered consumer by the City. Must be provided as a mandatory parameter in all messages, |  GUID of 32 characters with no punctuation |   
-| X-Session    | This is the session key obtained periodically from the City representing the log file entry of a user’s activities. The session identifier must be provided in all calls other than the service that returns the session identifier. |  GUID of 32 characters with no punctuation.  |    
-| X-Signature  | This is a hexadecimal string containing a key-hashed message authentication code (HMAC) calculated from the message string using the SHA256 hash algorithm and encoded using base 64.   | Base 64 encoded string containing an HMAC SHA256 authentication code.  |  
+The main contribution is [the API Spec](./fcsa_service_request-1.0.0-resolved.json), which conforms to [the Official 
+OpenAPI Spec](https://swagger.io/specification/).
 
-## [The Official OpenAPI Spec](https://swagger.io/specification/)
-The OpenAPI public link can be view here: [API](https://app.swaggerhub.com/apis/OpenCitiesLab/cct-customer_service_requests/2.1)
+## Getting Started
+The main value of this API spec is using it to generate client libraries in the language of your choice!
 
-| Property Name | Description                                                                                                                                                                                                                                 | Example                                            | 
-|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| Tags          | Grouping operation's are performed using tags. You can assign a list of tags to each API operation.                                                                                                                                         | tags: - name: pets                                 |   
-| Paths         | Paths are endpoints (resources), such as /users or /reports/summary/, that your API exposes                                                                                                                                                 | paths:/users/{id}                                  |    
-| Operations    | Are the HTTP methods used to manipulate these paths, such as GET, POST, PUT                                                                                                                                                                 | paths:/ping: get: responses: '200':description: OK |  
-| Parameters    | The parameters are defined in the parameter section of the operation or path.  To describe a parameter,  specify its name, location (in), data type (defined by either schema or content), and other attributes such as Description and Required. | parameters:- in: pathname: userId                  |  
-| Path Parameters | Path parameters are variable parts of a URL path.                                                                                                                                                                                           | GET /users/{id}                                    |  
-| Components Structure   | Components serve as a container for various reusable definitions – schemas (data models), parameters, responses                                                                                                                             | schemas:,   securitySchemes:                                         |  
-                                                                                                                                                                                                                                           |                                                    |  
+And, what is even better, is that since OpenAPI is an open standard, there are multiple generator libraries available.
 
+### Generating a Python client using Dockerised OpenAPI Generator Example
+The below command uses the [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) running inside a 
+Docker container:
+
+```bash
+docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+                -i /local/fcsa_service_request-1.0.0-resolved.json \
+                -g python \
+                --additional-properties=packageName="coct_sr_api_client" \
+                -o /local/dist/python
+```
+
+After running the above, you'll find a working Python client library, `coct_sr_api_client`, in `dist/python`.
+
+You'll need to get a few dependencies: `pip3 install -r dist/python/requirements.txt`
+
+There is a [test script](./bin/coct-get-sr-status.py) that uses this client to query the status of a SR:
+
+To use it from this repository's root:
+```bash
+PYTHONPATH=./dist/python python3 ./bin/coct-get-sr-status.py -r <redacted> \
+                                                             -p <redacted> \
+                                                             -k <redacted> \
+                                                             -v
+```
+
+And you should get a result looking like:
+```
+2023-03-17 00:40:54,458 __main__.<module> DEBUG: Received arguments: args.reference_number='<redacted>', args.public_key='<redacted>', args.private_key="********************************"
+2023-03-17 00:40:54,458 __main__.<module> INFO: Logging into API
+2023-03-17 00:40:55,179 __main__.<module> INFO: Logged into API
+2023-03-17 00:40:55,179 __main__.<module> INFO: Starting an API session
+2023-03-17 00:40:55,994 __main__.<module> INFO: sr_status=
+{'created_on': '25.02.2023 23:08:02',
+ 'date_created': '25.02.2023',
+ 'description': 'Blocked/Overflow',
+ 'house': '',
+ 'message': '',
+ 'reference_number': '<redacted>',
+ 'status': 'In Progress',
+ 'street1': '',
+ 'subtype': '',
+ 'suburb1': '',
+ 'time_created': '23:08:02',
+ 'type': ''}
+2023-03-17 00:40:55,994 __main__.<module> INFO: Ending API session
+```
