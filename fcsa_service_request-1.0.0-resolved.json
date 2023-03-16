@@ -15,16 +15,14 @@
       "description": "Quality Assurance Server"
     }
   ],
-  "security": [
-    {},
-    {
-      "cookieAuth": []
-    }
-  ],
   "tags": [
     {
       "name": "service_request_group",
-      "description": "This process shows the flow of actions in which the application takes for the creation of a service request. \n"
+      "description": "Operations relating to the creation and retrieval of information relating to service requests. \n"
+    },
+    {
+      "name": "config_group",
+      "description": "Operations relating to the configuration of service requests. \n"
     },
     {
       "name": "auth_group",
@@ -55,23 +53,18 @@
           "200": {
             "description": "OK",
             "headers": {
-              "Set-Cookie": {
+              "set-cookie": {
                 "description": "Pass this cookie back in subsequent requests.\n",
                 "style": "simple",
                 "explode": false,
                 "schema": {
-                  "$ref": "#/components/schemas/Login_Schema"
+                  "type": "string"
                 }
               }
             }
           }
-          
         },
-        "security": [
-          {
-            "cookieAuth": []
-          }
-        ]
+        "security": []
       }
     },
     "/zsreq/session": {
@@ -79,50 +72,62 @@
         "tags": [
           "auth_group"
         ],
-        "summary": "Returns a new session identifier, to be used in subsequent requests as the value for the X-Session header.\n",
-        "parameters": [
+        "security": [
           {
-            "name": "cookie",
-            "in": "query",
-            "description": "The MYSAPSSO2 authentication cookie. See /coct/api/zcur-guest/login path for details on how to retrieve it.\n",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "header",
-            "description": "This service retrieves a session identifier, in the form of a 32-character Globally Unique Identifier (GUID), to be used for the X-Service parameter.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Session",
-            "in": "header",
-            "description": "Retrieves a new session identifier for the X-Session header parameter.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
+            "cookieAuth": [],
+            "serviceAuth": []
           }
         ],
+        "summary": "Returns a new session identifier, to be used in subsequent requests as the value for the X-Session header.\n",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session_Schema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/zsreq/config/types": {
+      "get": {
+        "tags": [
+          "config_group"
+        ],
+        "security": [
+          {
+            "cookieAuth": [],
+            "sessionAuth": [],
+            "serviceAuth": []
+          }
+        ],
+        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.\n",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "ok",
             "content": {
-              "application/json": {
+              "application/json; charset=utf-8": {
                 "schema": {
-                  "$ref": "#/components/schemas/Session_Schema"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Config_Type_Schema"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error in retrieving all type codes and descriptions. (Internal)",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error_Schema"
                 }
               }
             }
@@ -133,40 +138,27 @@
     "/zsreq/config/subtypes": {
       "get": {
         "tags": [
-          "service_request_group"
+          "config_group"
         ],
-        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.\n",
-        "parameters": [
+        "security": [
           {
-            "name": "X-Session",
-            "in": "header",
-            "description": "This is the session key obtained periodically from the City representing the log file entry of a user’s activities.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "header",
-            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
+            "cookieAuth": [],
+            "sessionAuth": [],
+            "serviceAuth": []
           }
         ],
+        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.\n",
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "ok",
+            "description": "OK",
             "content": {
-              "application/json": {
+              "application/json; charset=utf-8": {
                 "schema": {
-                  "$ref": "#/components/schemas/Config_Type_Schema"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Config_Type_Schema"
+                  }
                 }
               }
             }
@@ -174,7 +166,7 @@
           "500": {
             "description": "Error in retrieving all type codes and descriptions. (Internal)",
             "content": {
-              "application/json": {
+              "application/json; charset=utf-8": {
                 "schema": {
                   "$ref": "#/components/schemas/Error_Schema"
                 }
@@ -189,6 +181,13 @@
         "tags": [
           "service_request_group"
         ],
+        "security": [
+          {
+            "cookieAuth": [],
+            "serviceAuth": [],
+            "sessionAuth": []
+          }
+        ],
         "summary": "This operation is used to retrieve the current state of a service request given the service request number.\n",
         "parameters": [
           {
@@ -201,46 +200,13 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "X-Signature",
-            "in": "header",
-            "description": "The X-Signature is mandatory for all POST operations. We create the signature by using HMAC (keyed-hash message authentication code).\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Session",
-            "in": "header",
-            "description": "This is the session key obtained periodically from the City representing the log file entry of a user’s activities.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "header",
-            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": {
+              "application/json; charset=utf-8": {
                 "schema": {
                   "$ref": "#/components/schemas/Request_Attributes_Lookup_Schema"
                 }
@@ -250,7 +216,7 @@
           "500": {
             "description": "Error in retrieving all type codes and descriptions. (Internal)",
             "content": {
-              "application/json": {
+              "application/json; charset=utf-8": {
                 "schema": {
                   "$ref": "#/components/schemas/Error_Schema"
                 }
@@ -265,32 +231,15 @@
         "tags": [
           "service_request_group"
         ],
-        "summary": "This operation is used to create a service request in the City’s system.\n",
-        "parameters": [
-
+        "security": [
           {
-            "name": "X-Session",
-            "in": "header",
-            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Service",
-            "in": "header",
-            "description": "This is the value of the public key issued  by the city to registered consumers.\n",
-            "required": true,
-            "style": "simple",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
+            "cookieAuth": [],
+            "serviceAuth": [],
+            "sessionAuth": []
           }
         ],
+        "summary": "This operation is used to create a service request in the City’s system.\n",
+        "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -307,7 +256,7 @@
           "500": {
             "description": "Error in retrieving all type codes and descriptions. (Internal)",
             "content": {
-              "application/json": {
+              "application/json; charset=utf-8": {
                 "schema": {
                   "$ref": "#/components/schemas/Error_Schema"
                 }
@@ -348,18 +297,18 @@
             "example": "Cat"
           },
           "type": {
-            "type": "string",
-            "example": "1001"
+            "type": "integer",
+            "example": 1001
           },
           "subtype": {
-            "type": "string",
-            "example": "1001"
+            "type": "integer",
+            "example": 1001
           }
         }
       },
       "Login_Schema": {
         "required": [
-          "cookie"
+          "set-cookie"
         ],
         "properties": {
           "cookie": {
@@ -512,7 +461,7 @@
           },
           "status": {
             "type": "string",
-            "example": "Tasks Completed"
+            "example": "Current state of work"
           },
           "message": {
             "type": "string",
@@ -540,8 +489,20 @@
     "securitySchemes": {
       "cookieAuth": {
         "type": "apiKey",
-        "description": "X-Service public key",
+        "description": "SAP Auth Cookie. See /coct/api/zcur-guest/login path for details on how to retrieve it.",
+        "name": "MYSAPSSO2",
+        "in": "cookie"
+      },
+      "serviceAuth": {
+        "type": "apiKey",
+        "description": "Session identifier. See /coct/api/zsreq/session on how to retrieve it",
         "name": "X-Service",
+        "in": "header"
+      },
+      "sessionAuth": {
+        "type": "apiKey",
+        "description": "Service identifier (public key). Should have been issued with your creds",
+        "name": "X-Session",
         "in": "header"
       }
     }
