@@ -28,12 +28,26 @@ jobs:
                                                                               --additional-properties=packageName="coct_sr_api_client" \
                                                                               --additional-properties=packageVersion=0.1.0
 
+    - name: Check if package version exists on PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        package_version=$(python3 setup.py --version)
+        curl -sSL https://pypi.org/pypi/my_package_name/json | grep -q "\"$package_version\"" && exit 1 || exit 0
+      continue-on-error: true
+      id: check_package_version
+
     - name: Publish to PyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        sudo chown -R $USER:$USER dist/python
-        cd dist/python
-        python3 setup.py sdist bdist_wheel
-        twine upload dist/*
+        if [ ${{ steps.check_package_version.outcome }} == "success" ]; then
+          sudo chown -R $USER:$USER dist/python
+          cd dist/python
+          python3 setup.py sdist bdist_wheel
+          twine upload dist/*
+        else
+          echo "Package version already exists on PyPI, skipping upload"
+        fi
