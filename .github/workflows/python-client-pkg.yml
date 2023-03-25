@@ -33,6 +33,7 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
+        sudo chown -R $USER:$USER dist/python
         cd dist/python
         python3 setup.py sdist bdist_wheel
         twine upload dist/*
