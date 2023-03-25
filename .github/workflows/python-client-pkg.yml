@@ -1,0 +1,38 @@
+name: Generate and publish Python client package for COCT SR API  
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3 python3-pip
+        pip3 install twine
+
+    - name: Generate Python client package
+      run: |
+        docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+                                                                              -i /local/fcsa_service_request-1.0.0-resolved.json \
+                                                                              -g python \
+                                                                              -o /local/dist/python \
+                                                                              --additional-properties=packageName="coct_sr_api_client" \
+                                                                              --additional-properties=packageVersion=0.1.0
+
+    - name: Publish to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        cd dist/python
+        python3 setup.py sdist bdist_wheel
+        twine upload dist/*
