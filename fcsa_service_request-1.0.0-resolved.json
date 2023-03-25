@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "CCT Customer Service Requests",
-    "description": "This section provides an overview of all aspects of the application programmers’ interface, including registration to use the interface, the various resources that constitute the interface and how these should be orchestrated into an application that will deliver consistent and reliable results.",
+    "description": "API for interacting with City of Cape Town's eServices",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -18,15 +18,15 @@
   "tags": [
     {
       "name": "service_request_group",
-      "description": "Operations relating to the creation and retrieval of information relating to service requests. \n"
+      "description": "Operations relating to the creation and retrieval of information relating to service requests."
     },
     {
       "name": "config_group",
-      "description": "Operations relating to the configuration of service requests. \n"
+      "description": "Operations relating to the configuration of service requests."
     },
     {
       "name": "auth_group",
-      "description": "This process shows the flow of actions in which the application's authorization process is conducted, that identifies authenticated, non-authenticated user and defines security groups.\n"
+      "description": "This process shows the flow of actions in which the application's authorization process is conducted, that identifies authenticated, non-authenticated user and defines security groups."
     }
   ],
   "paths": {
@@ -35,7 +35,7 @@
         "tags": [
           "auth_group"
         ],
-        "description": "Returns the MYSAPSSO2 authentication cookie to be used in subsequent requests. \n",
+        "description": "Returns the MYSAPSSO2 authentication cookie to be used in subsequent requests.",
         "parameters": [
           {
             "name": "cookie",
@@ -54,7 +54,7 @@
             "description": "OK",
             "headers": {
               "set-cookie": {
-                "description": "Pass this cookie back in subsequent requests.\n",
+                "description": "Pass this cookie back in subsequent requests.",
                 "style": "simple",
                 "explode": false,
                 "schema": {
@@ -78,7 +78,7 @@
             "serviceAuth": []
           }
         ],
-        "summary": "Returns a new session identifier, to be used in subsequent requests as the value for the X-Session header.\n",
+        "summary": "Returns a new session identifier, to be used in subsequent requests as the value for the X-Session header.",
         "parameters": [],
         "responses": {
           "200": {
@@ -106,7 +106,7 @@
             "serviceAuth": []
           }
         ],
-        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.\n",
+        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.",
         "parameters": [],
         "responses": {
           "200": {
@@ -147,7 +147,7 @@
             "serviceAuth": []
           }
         ],
-        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.\n",
+        "summary": "Returns the full set of request types or codes, and their descriptions for the City's Service Requests.",
         "parameters": [],
         "responses": {
           "200": {
@@ -188,12 +188,12 @@
             "sessionAuth": []
           }
         ],
-        "summary": "This operation is used to retrieve the current state of a service request given the service request number.\n",
+        "summary": "This operation is used to retrieve the current state of a service request given the service request number.",
         "parameters": [
           {
             "name": "reference_no",
             "in": "path",
-            "description": "The reference number of the service request.\n",
+            "description": "The reference number of the service request.",
             "required": true,
             "style": "simple",
             "explode": false,
@@ -238,7 +238,7 @@
             "sessionAuth": []
           }
         ],
-        "summary": "This operation is used to create a service request in the City’s system.\n",
+        "summary": "This operation is used to create a service request in the City’s system.",
         "parameters": [],
         "requestBody": {
           "content": {
