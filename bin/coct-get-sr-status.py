@@ -5,7 +5,7 @@ import sys
 import re
 
 import coct_sr_api_client
-from coct_sr_api_client.apis.tags import auth_group_api, config_group_api, service_request_group_api
+from coct_sr_api_client.api import auth_group_api, service_request_group_api
 
 logger = logging.getLogger(__name__)
 
@@ -13,13 +13,13 @@ logger = logging.getLogger(__name__)
 def validate_reference_number(value):
     if not re.match(r'^9\d{9}$', value):
         raise argparse.ArgumentTypeError('Reference number must be a 10-digit number starting with 9')
-    return value
+    return str(value)
 
 
 def validate_hex_string(value):
     if not re.match(r'^[0-9a-fA-F]{32}$', value.replace("-", "")):
         raise argparse.ArgumentTypeError('Invalid hex string: must be 32 characters long')
-    return value
+    return str(value)
 
 
 if __name__ == '__main__':
@@ -50,11 +50,13 @@ if __name__ == '__main__':
     with coct_sr_api_client.ApiClient(configuration) as api_client:
         auth_api_instance = auth_group_api.AuthGroupApi(api_client)
         logger.info("Logging into API")
-        login_response = auth_api_instance.zcur_guest_login_get({"cookie": args.private_key.replace("-", "")})
+        login_response = auth_api_instance.zcur_guest_login_get_without_preload_content(
+            cookie=args.private_key.replace("-", "")
+        )
 
         # Copying out the auth cookie, and setting it
         # clunkier than I expected
-        set_cookie = login_response.response.headers['set-cookie']
+        set_cookie = login_response.headers['set-cookie']
         sap_sso_cookie, *_ = set_cookie.split(";")
         configuration.api_key['cookieAuth'] = sap_sso_cookie
 
@@ -63,12 +65,11 @@ if __name__ == '__main__':
         logger.info("Starting an API session")
         # Setting the API session
         session_response = auth_api_instance.zsreq_session_get()
-        configuration.api_key['sessionAuth'] = session_response.body.session_id
+        configuration.api_key['sessionAuth'] = session_response.session_id
 
         # Actually looking up the current state of the SR
         sr_api_instance = service_request_group_api.ServiceRequestGroupApi(api_client)
-        sr_status_response = sr_api_instance.zsreq_sr_reference_no_get({"reference_no": str(args.reference_number)})
-        sr_status = sr_status_response.body
-        logger.info(f"sr_status=\n{pprint.pformat((dict(sr_status)))}")
+        sr_status_response = sr_api_instance.zsreq_sr_reference_no_get(reference_no=args.reference_number)
+        logger.info(f"sr_status=\n{pprint.pformat((dict(sr_status_response)))}")
 
         logger.info("Ending API session")
