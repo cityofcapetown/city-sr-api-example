@@ -14,8 +14,10 @@ The below command uses the [OpenAPI Generator](https://github.com/OpenAPITools/o
 Docker container:
 
 ```bash
-docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
-                -i /local/fcsa_service_request-1.0.0-resolved.json \
+docker run --rm -v "${PWD}:/local" \
+                openapitools/openapi-generator-cli@sha256:a1460b4c11dc8c883cd34b2dbfe19d08954aea2f533cf238ff24a1fd71462aa4 \
+                generate \
+                -i /local/city-sr-api.json \
                 -g python \
                 --additional-properties=packageName="coct_sr_api_client" \
                 -o /local/dist/python
