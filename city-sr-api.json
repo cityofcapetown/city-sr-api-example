@@ -54,9 +54,9 @@
             "description": "OK",
             "headers": {
               "set-cookie": {
-                "description": "Pass this cookie back in subsequent requests.",
+                "description": "Need to extract the MYSAPSSO2 cookie from this header, and pass it back in subsequent requests.",
                 "style": "simple",
-                "explode": false,
+                "explode": true,
                 "schema": {
                   "type": "string"
                 }
@@ -157,7 +157,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Config_Type_Schema"
+                    "$ref": "#/components/schemas/Config_Subtype_Schema"
                   }
                 }
               }
@@ -285,6 +285,23 @@
         }
       },
       "Config_Type_Schema": {
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Cat"
+          },
+          "type": {
+            "type": "integer",
+            "example": 1001
+          }
+        }
+      },
+      "Config_Subtype_Schema": {
         "required": [
           "name",
           "subtype",

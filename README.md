@@ -1,7 +1,7 @@
 # CCT CUSTOMER SERVICE REQUESTS
 This repo documents the City of Cape Town's eService API, with a particular focus on the Service Request functionality.
 
-The main contribution is [the API Spec](./fcsa_service_request-1.0.0-resolved.json), which conforms to [the Official 
+The main contribution is [the API Spec](./city-sr-api.json), which conforms to [the Official 
 OpenAPI Spec](https://swagger.io/specification/).
 
 ## Getting Started
