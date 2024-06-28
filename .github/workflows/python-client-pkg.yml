@@ -22,7 +22,7 @@ jobs:
     - name: Generate Python client package
       run: |
         docker run --rm -v "${PWD}:/local" \
-          openapitools/openapi-generator-clisha256:a1460b4c11dc8c883cd34b2dbfe19d08954aea2f533cf238ff24a1fd71462aa4 \ 
+          openapitools/openapi-generator-cli@sha256:a1460b4c11dc8c883cd34b2dbfe19d08954aea2f533cf238ff24a1fd71462aa4 \ 
           generate \
           -i /local/city-sr-api.json \
           -g python \
