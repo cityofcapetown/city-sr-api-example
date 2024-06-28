@@ -15,7 +15,7 @@ Docker container:
 
 ```bash
 docker run --rm -v "${PWD}:/local" \
-                openapitools/openapi-generator-cli@sha256:bb46f68d9fd14502760f4c6b6fc31f56bdcff38b6a939eb2e2ef0a47afc3c899 \
+                openapitools/openapi-generator-cli:v7.6.0 \
                 generate \
                 -i /local/city-sr-api.json \
                 -g python \
