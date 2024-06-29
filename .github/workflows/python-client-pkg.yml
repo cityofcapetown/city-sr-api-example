@@ -32,7 +32,7 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        package_version=$(python3 setup.py --version)
+        package_version=$(python3 dist/python/setup.py --version)
         curl -sSL https://pypi.org/pypi/my_package_name/json | grep -q "\"$package_version\"" && exit 1 || exit 0
       continue-on-error: true
       id: check_package_version
