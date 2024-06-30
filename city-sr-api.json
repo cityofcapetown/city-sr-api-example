@@ -252,7 +252,14 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request_Attribute_Response_Schema"
+                }
+              }
+            }
           },
           "500": {
             "description": "Error in retrieving all type codes and descriptions. (Internal)",
@@ -359,104 +366,116 @@
       },
       "Request_Attributes_Schema": {
         "required": [
-          "account_number",
-          "address",
-          "category_1",
-          "category_2",
-          "comm",
-          "email",
-          "firstName",
-          "id",
-          "lastName",
+          "type",
+          "subtype",
+          "message",
           "latitude",
           "longitude",
-          "message",
-          "street",
-          "street_number",
-          "subtype",
-          "suburb",
           "telephone",
-          "type",
-          "username"
+          "comm",
+          "suburb",
+          "street",
+          "street_number"
         ],
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 1
-          },
-          "category_1": {
-            "type": "string",
-            "example": "Support COMPLAINTS"
-          },
-          "category_2": {
-            "type": "string",
-            "example": "Street Lights - Single Light Out"
-          },
-          "suburb": {
-            "type": "string",
-            "example": "ADRIAANSE"
-          },
-          "email": {
-            "type": "string",
-            "example": "cdorsett3@loc.gov"
-          },
-          "message": {
-            "type": "string",
-            "example": "This requests was captured by the Walking the Streets program."
-          },
-          "address": {
-            "type": "string",
-            "example": "08 Maple Wood Hill"
-          },
-          "username": {
-            "type": "string",
-            "example": ""
-          },
-          "account_number": {
-            "type": "string",
-            "example": ""
-          },
-          "comm": {
-            "type": "string",
-            "example": "Maple"
-          },
-          "latitude": {
-            "type": "string",
-            "example": "-34.1080381288507"
-          },
-          "longitude": {
-            "type": "string",
-            "example": "18.47152590751648"
-          },
           "type": {
             "type": "integer",
-            "example": 1005
+            "description": "A 4-digit code identifying a specific grouping of services. See path /zsreq/config/types for acceptable values.",
+            "example": 1001,
+            "minimum": 1000,
+            "maximum": 9999
           },
           "subtype": {
             "type": "integer",
-            "example": 1001
+            "description": "A 4-digit code identifying an individual service. See path /zsreq/config/subtypes for acceptable values.",
+            "example": 1002,
+            "minimum": 1000,
+            "maximum": 9999
+          },
+          "message": {
+            "type": "string",
+            "description": "The text describing the requested service as entered by the user.",
+            "example": "Please collect the whale carcass from Muizenberg beach"
+          },
+          "address": {
+            "type": "string",
+            "description": "The comma-delimited address of the location of the service request.",
+            "example": "1 Beach Road, Muizenberg"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The latitude of the location of the issue (in decimal degrees)",
+            "minimum": -34.35,
+            "maximum": -33.47,
+            "example":-34.105420
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The longitude of the location of the issue (in decimal degrees)",
+            "minimum": 18.3,
+            "maximum": 19,
+            "example":18.474681
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Valid email address (required if comm is “email”)",
+            "example": "concerned@beachwalker.co.za"
           },
           "telephone": {
             "type": "string",
-            "example": ""
+            "pattern": "^(\\+27|0)\\d{9}$",
+            "description": "Valid local mobile telephone number",
+            "example": "+27811234756"
           },
-          "firstName": {
+          "comm": {
             "type": "string",
-            "example": "Gwenora"
+            "description": "Communication preference. 'INT' is selects correspondence via email, 'SMS' is SMS text message via the telephone number.",
+            "enum": ["EMAIL", "SMS", "NONE"],
+            "example": "EMAIL"
           },
-          "lastName": {
+          "suburb": {
             "type": "string",
-            "example": "Mellor"
+            "description": "The suburb name component of the location of the service request.",
+            "example": "Muizenberg"
           },
           "street": {
             "type": "string",
-            "example": "Utah"
+            "description": "The street name component of the location of the service request.",
+            "example": "Beach Rd"
           },
           "street_number": {
-            "type": "integer",
-            "example": 76
+            "type": "string",
+            "description": "The street number component of the location of the service request.",
+            "example": "1"
+          }
+        }
+      },
+      "Request_Attribute_Response_Schema": {
+        "required": [
+          "reference_number",
+          "category",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "reference_number": {
+            "type": "string",
+            "description": "The reference number of the service request",
+            "example": "000010011101"
+          },
+          "category": {
+            "type": "string",
+            "description": "A description of the requested service category",
+            "example": "Animal carcass removal - Whale"
+          },
+          "message": {
+            "type": "string",
+            "description": "Text description including further details of the requested service and\nfeedback",
+            "example": "lease collect the whale carcass from Muizenberg beach before the wind direction\nchanges."
           }
         }
       },
