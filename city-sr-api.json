@@ -481,13 +481,14 @@
       },
       "Request_Attributes_Lookup_Schema": {
         "required": [
-          "description",
-          "message",
           "reference_number",
-          "status",
+          "type",
           "subtype",
+          "description",
+          "status",
+          "message",
           "time_created",
-          "type"
+          "date_created"
         ],
         "type": "object",
         "properties": {
@@ -497,27 +498,44 @@
           },
           "type": {
             "type": "string",
+            "pattern": "^(\\d{4}|)$",
+            "description": "The four-digit code of the service group containing the selected service. See path /zsreq/config/types for possible values.",
             "example": "1001"
           },
           "subtype": {
             "type": "string",
+            "pattern": "^(\\d{4}|)$",
+            "description": "The four-digit code of the specific service selected. See path /zsreq/config/subtypes for possible values.",
             "example": "1002"
           },
           "description": {
             "type": "string",
+            "description": "A text description including further details of the requested service and feedback",
             "example": "Animal carcass removal - Whale"
           },
           "status": {
             "type": "string",
-            "example": "Current state of work"
+            "description": "Current state of work",
+            "example": "Closed"
           },
           "message": {
             "type": "string",
-            "example": "Please collect the whale carcass from Muizenberg beach"
+            "description": "A text description including further details of the requested service and feedback",
+            "example": " Please collect the whale carcass from Muizenberg beach before the wind direction changes. 28.11.2014 11:20:13 Gareth Dohne (SC_GD1) The carcass Please collect the whale carcass from Muizenberg beach has been successfully removed from the beach and the surrounding area cleaned up."
           },
           "time_created": {
             "type": "string",
-            "example": "36539"
+            "format": "partial-time",
+            "pattern": "^([0-1]\\d|2[0-3])\\:[0-5]\\d\\:[0-5]\\d$",
+            "description": "The ISO8601 compliant partial time (HH:MM:SS) at which the request was created. SAST timezone is implied.",
+            "example": "10:08:59"
+          },
+          "date_created": {
+            "type": "string",
+            "format": "city-custom-date",
+            "pattern": "^([0-2]\\d|3[0-1])\\.(0\\d|1[0-2])\\.\\d{4}$",
+            "description": "The date (NB not ISO8601 compliant, DD.MM.YYYY) on which the request was created. SAST timezone is implied.",
+            "example": "28.11.2014"
           }
         }
       }
