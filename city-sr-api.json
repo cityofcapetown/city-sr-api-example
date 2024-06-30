@@ -235,7 +235,8 @@
           {
             "cookieAuth": [],
             "serviceAuth": [],
-            "sessionAuth": []
+            "sessionAuth": [],
+            "signatureAuth": []
           }
         ],
         "summary": "This operation is used to create a service request in the City’s system.",
@@ -515,6 +516,12 @@
       }
     },
     "securitySchemes": {
+      "signatureAuth": {
+        "type": "apiKey",
+        "description": "Base 64 encoded, hexadecimal string of the HMAC SHA256 encoding of the message contents. See https://www.jokecamp.com/blog/examples-of-creating-base64-hashes-using-hmac-sha256-in-different-languages/ for examples of how to compute this for different languages.",
+        "name": "X-Signature",
+        "in": "header"
+      },
       "cookieAuth": {
         "type": "apiKey",
         "description": "SAP Auth Cookie. See /coct/api/zcur-guest/login path for details on how to retrieve it.",
