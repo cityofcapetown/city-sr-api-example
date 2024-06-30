@@ -293,11 +293,15 @@
         "properties": {
           "name": {
             "type": "string",
-            "example": "Cat"
+            "description": "A description of the service or grouping represented by the code",
+            "example": "Animal carcass removal"
           },
           "type": {
             "type": "integer",
-            "example": 1001
+            "description": "A 4-character code identifying a specific grouping of services",
+            "example": 1001,
+            "minimum": 1000,
+            "maximum": 9999
           }
         }
       },
@@ -311,15 +315,22 @@
         "properties": {
           "name": {
             "type": "string",
+            "description": "A description of the service or grouping represented by the code",
             "example": "Cat"
           },
           "type": {
             "type": "integer",
-            "example": 1001
+            "description": "A 4-digit code identifying a specific grouping of services",
+            "example": 1001,
+            "minimum": 1000,
+            "maximum": 9999
           },
           "subtype": {
             "type": "integer",
-            "example": 1001
+            "description": "A 4-digit code identifying an individual service",
+            "example": 1001,
+            "minimum": 1000,
+            "maximum": 9999
           }
         }
       },
