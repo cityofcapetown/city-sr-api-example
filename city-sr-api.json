@@ -451,6 +451,18 @@
             "type": "string",
             "description": "The street number component of the location of the service request.",
             "example": "1"
+          },
+          "firstName": {
+            "type": "string",
+            "pattern": "^.{0,40}$",
+            "description": "The first name of the contact person.",
+            "example": "Sipho"
+          },
+          "lastName": {
+            "type": "string",
+            "pattern": "^.{0,40}$",
+            "description": "The last name of the contact person.",
+            "example": "Daniels"
           }
         }
       },
