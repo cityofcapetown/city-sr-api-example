@@ -47,7 +47,8 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--email', type=str, required=True,
                         help='Email of the reporter')
     parser.add_argument('-c', '--comm', type=str, required=True, choices=["EMAIL", "SMS", "NONE"],
-                        help='Communication preference of the reporter. EMAIL refers to email, SMS refers to SMS, and NONE refers to well, none')
+                        help='Communication preference of the reporter. '
+                             'EMAIL refers to email, SMS refers to SMS, and NONE refers to well, no preference')
     parser.add_argument('-sn', '--street-number', type=str, required=True,
                         help='Street number of the service request.')
     parser.add_argument('-str', '--street', type=str, required=True,
@@ -71,7 +72,6 @@ if __name__ == '__main__':
     sr_args = vars(args).copy()
     for key in ["verbose", "public_key", "private_key"]:
         del sr_args[key]
-    sr_args['username'] = ""  # unused arg in API spec
 
     request_attrs = RequestAttributesSchema(**sr_args)
     logger.debug(f'Received arguments: {args.public_key=}, args.private_key="{"*" * len(args.private_key)}"')
