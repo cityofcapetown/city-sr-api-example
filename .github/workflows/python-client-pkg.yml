@@ -25,7 +25,7 @@ jobs:
                                                                                               -g python \
                                                                                               -o /local/dist/python \
                                                                                               --additional-properties=packageName="coct_sr_api_client" \
-                                                                                              --additional-properties=packageVersion=0.2.0
+                                                                                              --additional-properties=packageVersion=0.3.0
 
     - name: Check if package version exists on PyPI
       env:
